@@ -2,6 +2,8 @@ package br.com.loja.assistec.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import br.com.loja.assistec.model.Usuario;
 import br.com.loja.assistec.view.CadastrarUsuariosView;
@@ -24,6 +26,15 @@ public class CadastrarUsuarioController {
 
 	private void configurarListeners() {
 		cadastrarView.addCadastrarUsuariosListener(new CadastrarUsuariosListener());
+		cadastrarView.addWindowListener(new WindowAdapter(){
+			
+			public void windowOpened(WindowEvent e) {
+				if(usuarioSelecionado != null) {
+					cadastrarView.preencherCampos(usuarioSelecionado);
+					cadastrarView.habilitarBotaoExcluir(true);
+				}
+			}
+		});
 	}
 	
 	private class CadastrarUsuariosListener implements ActionListener{
