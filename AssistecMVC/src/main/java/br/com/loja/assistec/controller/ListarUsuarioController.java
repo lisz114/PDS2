@@ -16,7 +16,7 @@ import br.com.loja.assistec.view.MensagemView;
 
 public class ListarUsuarioController {
 	private ListarUsuariosView listarView;
-
+	
 	public ListarUsuarioController() throws SQLException {
 		listarView = new ListarUsuariosView();
 		listarView.setLocationRelativeTo(null);
@@ -24,7 +24,7 @@ public class ListarUsuarioController {
 		configurarListeners();
 		carregarUsuarios();
 	}
-
+	
 	public void configurarListeners() {
 		listarView.addListarUsuariosListener(new ListarUsuariosListener());
 		listarView.addWindowListener(new JanelaAberturaListener());
@@ -33,49 +33,51 @@ public class ListarUsuarioController {
 
 	public void carregarUsuarios() throws SQLException {
 		try {
-			ArrayList<Usuario> listaUsuarios = listarUsuarios();
-			if (!listaUsuarios.isEmpty()) {
-				listarView.mostrarUsuariosTabela(listaUsuarios);
-			}
-		} catch (SQLException e) {
-			new MensagemView("Erro ao carregar usuários!", 0);
+		ArrayList<Usuario> listaUsuarios = listarUsuarios();
+		if(!listaUsuarios.isEmpty()) {
+			listarView.mostrarUsuariosTabela(listaUsuarios);
 		}
+	} catch (SQLException e) {
+		new MensagemView("Erro ao carregar usuários!",0);
 	}
-
-	public ArrayList<Usuario> listarUsuarios() throws SQLException {
+	}
+	
+	public ArrayList<Usuario> listarUsuarios() throws SQLException{
 		UsuarioDAO dao = new UsuarioDAO();
 		return dao.selecionarUsuarios();
 	}
-
-	// Classe que trata o evento do clique na tabela
-	private class TabelaMouseClickListener extends MouseAdapter {
-
+	
+	private Usuario buscarUsuarioPorID(Long iduser) throws SQLException {
+		UsuarioDAO dao = new UsuarioDAO();
+		return dao.selecionarUsuario(iduser);
+	}
+	
+	//Classe que trata o evento do clique na tabela
+	private class TabelaMouseClickListener extends MouseAdapter{
+		
 		public void mouseClicked(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON1) {
-				// Selecionar o usuario
+				//Selecionar o usuario
 				int linha = listarView.getLinhaSelecionada();
 				Long iduser = (Long) listarView.getValorLinhaColuna(linha, 0);
 				try {
 					Usuario usuarioSelecionado = buscarUsuarioPorID(iduser);
+					abrirCadastroUsuario(usuarioSelecionado);
 				} catch (SQLException e1) {
-					new MensagemView("Erro ao buscar o usuário!", 0);
+					new MensagemView("Erro ao buscar usuário!",0);
 				}
+				
 			}
 		}
-
-		private Usuario buscarUsuarioPorID(Long iduser) throws SQLException {
-			UsuarioDAO dao = new UsuarioDAO();
-			return dao.selecionarUsuario(iduser);
-		}
 	}
-
-	// Classe que trata os eventos de botao
+	
+	//Classe que trata os eventos de botao
 	private class ListarUsuariosListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String comando = e.getActionCommand();
 			switch (comando) {
-			case "BotaoCadastrarAction":
+			case "BotaoCadastrarAction": 
 				abrirCadastroUsuario(null);
 				break;
 			case "BotaoFecharAction":
@@ -85,14 +87,14 @@ public class ListarUsuarioController {
 				break;
 			}
 		}
-
+		
 	}
-
+	
 	public void abrirCadastroUsuario(Usuario usuarioSelecionado) {
 		new CadastrarUsuarioController(this, usuarioSelecionado);
 	}
-
-	private class JanelaAberturaListener extends WindowAdapter {
+	
+	private class JanelaAberturaListener extends WindowAdapter{
 		public void windowOpened(WindowEvent e) {
 			try {
 				carregarUsuarios();
@@ -100,5 +102,9 @@ public class ListarUsuarioController {
 				e1.printStackTrace();
 			}
 		}
+	}
+
+	public void atualizarTabela(ArrayList<Usuario> novosUsuarios) {
+		listarView.atualizarTabelaUsuarios(novosUsuarios);
 	}
 }
