@@ -65,7 +65,8 @@ public class CadastrarUsuariosView extends JFrame {
         contentPane.add(panelCampos, BorderLayout.CENTER);
 
         JPanel panelBotoes = new JPanel();
-        btnIncluir = new JButton(usuarioSelecionado == null ? "Incluir" : "Alterar");
+        btnIncluir = new JButton(usuarioSelecionado == null 
+        		? "Incluir" : "Alterar");
         btnIncluir.setActionCommand("BotaoIncluirAction");
         btnExcluir = new JButton("Excluir");
         btnExcluir.setActionCommand("BotaoExcluirAction");
@@ -123,13 +124,11 @@ public class CadastrarUsuariosView extends JFrame {
 		btnExcluir.setVisible(b);
 	}
 
-	private void Excluir() {
-		MensagemView mv = new MensagemView("Tem certeza que deseja excluir?");
-		int confirmação = mv.getResposta();
-		if(confirmação == 1) {
-			excluir(usuarioSelecionado.getIduser());
-		}
+	public Object getPerfilSelecionado() {
+		return cbPerfil.getSelectedItem();
 	}
+	
+
 
 
 }
